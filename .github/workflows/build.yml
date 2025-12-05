@@ -1,0 +1,45 @@
+name: Build Gradle Project
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the code (Replacement for GitLab's auto-checkout)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Java (Replacement for 'image: gradle:9.1.0-jdk25')
+      # Note: JDK 25 is bleeding edge. I used 23 (latest feature) here.
+      # If you strictly need 25, you can try '25-ea' or use a container strategy.
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+
+      # 3. Setup Gradle (Handles caching and 'GRADLE_OPTS' daemon logic automatically)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # 4. Grant execute permission for gradlew (Common issue in GitHub Actions)
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # 5. Run the build (Same script as your GitLab file)
+      - name: Build with Gradle
+        run: ./gradlew clean build --refresh-dependencies
+
+      # 6. Save Artifacts (Replacement for 'artifacts: paths:')
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-artifacts
+          path: build/libs/*.jar
+          retention-days: 7 # Replacement for 'expire_in: 1 week'

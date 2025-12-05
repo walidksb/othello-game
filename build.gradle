@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'jacoco'
+    id 'com.gradleup.shadow' version '9.2.2'
+}
+
+group = 'fr.univ_amu.m1info.board_game_library'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainModule = 'fr.univ_amu.m1info.board_game_library'
+    mainClass = 'fr.univ_amu.m1info.othello.OthelloApplication'
+    applicationDefaultJvmArgs = [
+            "--enable-native-access=ALL-UNNAMED",
+            "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED"
+    ]
+}
+
+
+javafx {
+    version = '25'
+    modules = ['javafx.controls']
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+shadowJar {
+    archiveFileName = 'othello-game.jar'
+    manifest {
+        attributes 'Main-Class': 'fr.univ_amu.m1info.othello.OthelloApplication'
+    }
+}
