@@ -60,7 +60,7 @@ Snapshot immuable d’une partie pour **undo/redo**.
 
 ➡️ *Tout est testable unitairement, sans JavaFX.*
 
----
+----
 
 # 2️⃣ Couche **IA (ai)** — Intelligence Artificielle
 
